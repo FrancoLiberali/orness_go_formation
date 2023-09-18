@@ -5,3 +5,9 @@ package models
 // Name: name of the album
 // Artist: artist name
 // Songs: amount of songs of the album
+type Album struct {
+	ID     uint
+	Name   string
+	Artist string
+	Songs  uint
+}
