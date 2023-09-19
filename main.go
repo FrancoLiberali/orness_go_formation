@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/FrancoLiberali/orness_go_formation/models"
 	"github.com/gorilla/mux"
@@ -42,19 +44,30 @@ func getAlbumByID(id uint) (*models.Album, error) {
 
 func getAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 	// EX2.2 add handler that responds the list of albums in json format
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(albums)
 }
 
 func getAlbumByIDHandler(w http.ResponseWriter, r *http.Request) {
 	// EX2.3 add handler that responds an album by the id present in the url
 	// or an error in case the album is not found
 	// HINT you will need to transform a string into a int
-	// EX1.4 Print in the console the album with the id number 1 or the error if produced
-	// album, err := getAlbumByID(1)
-	// if err != nil {
-	// 	log.Println(err.Error())
-	// } else {
-	// 	log.Println(album)
-	// }
+	albumIDString := mux.Vars(r)["id"]
+	albumID, err := strconv.Atoi(albumIDString)
+	if err != nil {
+		log.Printf("Error transforming into int: %v", err)
+		http.Error(w, "can't transform into int", http.StatusBadRequest)
+		return
+	}
+
+	album, err := getAlbumByID(uint(albumID))
+	if err != nil {
+		http.Error(w, "album not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(album)
 }
 
 func loggerMiddleware(next http.Handler) http.Handler {
@@ -70,5 +83,7 @@ func main() {
 	// EX2.4 add to the router the following routes:
 	// /album to get the list of albums
 	// /album/id to get an album by its id
+	router.HandleFunc("/album", getAlbumsHandler).Methods(http.MethodGet)
+	router.HandleFunc("/album/{id}", getAlbumByIDHandler).Methods(http.MethodGet)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

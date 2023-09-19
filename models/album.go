@@ -7,8 +7,8 @@ package models
 // Songs: amount of songs of the album
 // EX2.1: Add json tags to marshall this struct into json
 type Album struct {
-	ID     uint
-	Name   string
-	Artist string
-	Songs  uint
+	ID     uint   `json:"id"`
+	Name   string `json:"name"`
+	Artist string `json:"artist"`
+	Songs  uint   `json:"songs"`
 }
