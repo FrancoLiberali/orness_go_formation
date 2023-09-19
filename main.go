@@ -3,8 +3,10 @@ package main
 import (
 	"errors"
 	"log"
+	"net/http"
 
 	"github.com/FrancoLiberali/orness_go_formation/models"
+	"github.com/gorilla/mux"
 )
 
 // EX1.2 Declare a variable called albums that contains the following reggaeton albums (models.Album):
@@ -38,12 +40,35 @@ func getAlbumByID(id uint) (*models.Album, error) {
 	return nil, errors.New("album not found")
 }
 
-func main() {
+func getAlbumsHandler(w http.ResponseWriter, r *http.Request) {
+	// EX2.2 add handler that responds the list of albums in json format
+}
+
+func getAlbumByIDHandler(w http.ResponseWriter, r *http.Request) {
+	// EX2.3 add handler that responds an album by the id present in the url
+	// or an error in case the album is not found
+	// HINT you will need to transform a string into a int
 	// EX1.4 Print in the console the album with the id number 1 or the error if produced
-	album, err := getAlbumByID(1)
-	if err != nil {
-		log.Println(err.Error())
-	} else {
-		log.Println(album)
-	}
+	// album, err := getAlbumByID(1)
+	// if err != nil {
+	// 	log.Println(err.Error())
+	// } else {
+	// 	log.Println(album)
+	// }
+}
+
+func loggerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s - %s (%s)", r.Method, r.URL.Path, r.RemoteAddr)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func main() {
+	router := mux.NewRouter().StrictSlash(true)
+	router.Use(loggerMiddleware)
+	// EX2.4 add to the router the following routes:
+	// /album to get the list of albums
+	// /album/id to get an album by its id
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
