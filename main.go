@@ -93,9 +93,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(
+	err = db.AutoMigrate(
 		&models.Album{},
 	)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	router := gin.Default()
 	// EX2.4 add to the router the following routes:
