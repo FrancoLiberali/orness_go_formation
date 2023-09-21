@@ -76,6 +76,10 @@ func getAlbumByIDHandler(c *gin.Context) {
 	}
 }
 
+func healthHandler(c *gin.Context) {
+	c.Status(http.StatusOK)
+}
+
 var db *gorm.DB
 
 func main() {
@@ -102,5 +106,6 @@ func main() {
 	// /album/id to get an album by its id
 	router.GET("/album", getAlbumsHandler)
 	router.GET("/album/:id", getAlbumByIDHandler)
+	router.GET("/health", healthHandler)
 	log.Fatal(router.Run("localhost:8080"))
 }
