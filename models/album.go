@@ -8,7 +8,7 @@ package models
 // EX2.1: Add json tags to marshall this struct into json
 // EX3.1: Add gorm tags to save albums in a relational database
 type Album struct {
-	ID     uint   `json:"id"`
+	ID     uint   `json:"id";gorm:"primaryKey"`
 	Name   string `json:"name"`
 	Artist string `json:"artist"`
 	Songs  uint   `json:"songs"`
